@@ -143,38 +143,56 @@ const mapShopifyCollection = (node: ShopifyCollection): Collection => {
 // BRIDGE FUNCTIONS
 
 export async function getProducts(): Promise<Product[]> {
-    const response = await shopifyFetch<{ products: Connection<ShopifyProduct> }>({
-        query: GET_PRODUCTS_QUERY,
-    });
+    try {
+        const response = await shopifyFetch<{ products: Connection<ShopifyProduct> }>({
+            query: GET_PRODUCTS_QUERY,
+        });
 
-    if (!response?.body?.data?.products) {
-        return PRODUCTS; // Fallback to mock
+        if (!response?.body?.data?.products) {
+            console.warn("Shopify returned empty products. Falling back to mocks.");
+            return PRODUCTS;
+        }
+
+        return response.body.data.products.edges.map(({ node }) => mapShopifyProduct(node));
+    } catch (error) {
+        console.error("Failed to fetch products from Shopify:", error);
+        return PRODUCTS;
     }
-
-    return response.body.data.products.edges.map(({ node }) => mapShopifyProduct(node));
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
-    const response = await shopifyFetch<{ product: ShopifyProduct }>({
-        query: GET_PRODUCT_BY_HANDLE_QUERY,
-        variables: { handle },
-    });
+    try {
+        const response = await shopifyFetch<{ product: ShopifyProduct }>({
+            query: GET_PRODUCT_BY_HANDLE_QUERY,
+            variables: { handle },
+        });
 
-    if (!response?.body?.data?.product) {
+        if (!response?.body?.data?.product) {
+            console.warn(`Shopify product ${handle} not found. Checking mocks.`);
+            return PRODUCTS.find(p => p.handle === handle || p.id === handle);
+        }
+
+        return mapShopifyProduct(response.body.data.product);
+    } catch (error) {
+        console.error(`Failed to fetch product ${handle} from Shopify:`, error);
         return PRODUCTS.find(p => p.handle === handle || p.id === handle);
     }
-
-    return mapShopifyProduct(response.body.data.product);
 }
 
 export async function getCollections(): Promise<Collection[]> {
-    const response = await shopifyFetch<{ collections: Connection<ShopifyCollection> }>({
-        query: GET_COLLECTIONS_QUERY,
-    });
+    try {
+        const response = await shopifyFetch<{ collections: Connection<ShopifyCollection> }>({
+            query: GET_COLLECTIONS_QUERY,
+        });
 
-    if (!response?.body?.data?.collections) {
+        if (!response?.body?.data?.collections) {
+            console.warn("Shopify returned empty collections. Returning mocks.");
+            return COLLECTIONS;
+        }
+
+        return response.body.data.collections.edges.map(({ node }) => mapShopifyCollection(node));
+    } catch (error) {
+        console.error("Failed to fetch collections from Shopify:", error);
         return COLLECTIONS;
     }
-
-    return response.body.data.collections.edges.map(({ node }) => mapShopifyCollection(node));
 }
