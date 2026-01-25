@@ -1,6 +1,56 @@
+
+import {
+    CREATE_CART_MUTATION,
+    ADD_CART_LINES_MUTATION,
+    UPDATE_CART_LINES_MUTATION,
+    REMOVE_CART_LINES_MUTATION,
+    GET_CART_QUERY
+} from "./queries";
+import { Cart } from "./shopifyTypes";
+
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const storefrontAccessToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 const apiVersion = "2024-01";
+
+export async function createCart(lines: { merchandiseId: string; quantity: number }[]): Promise<Cart | undefined> {
+    const res = await shopifyFetch<{ cartCreate: { cart: Cart } }>({
+        query: CREATE_CART_MUTATION,
+        variables: { lines },
+    });
+    return res?.body.data.cartCreate.cart;
+}
+
+export async function addToCart(cartId: string, lines: { merchandiseId: string; quantity: number }[]): Promise<Cart | undefined> {
+    const res = await shopifyFetch<{ cartLinesAdd: { cart: Cart } }>({
+        query: ADD_CART_LINES_MUTATION,
+        variables: { cartId, lines },
+    });
+    return res?.body.data.cartLinesAdd.cart;
+}
+
+export async function removeFromCart(cartId: string, lineIds: string[]): Promise<Cart | undefined> {
+    const res = await shopifyFetch<{ cartLinesRemove: { cart: Cart } }>({
+        query: REMOVE_CART_LINES_MUTATION,
+        variables: { cartId, lineIds },
+    });
+    return res?.body.data.cartLinesRemove.cart;
+}
+
+export async function updateCartLines(cartId: string, lines: { id: string; merchandiseId?: string; quantity: number }[]): Promise<Cart | undefined> {
+    const res = await shopifyFetch<{ cartLinesUpdate: { cart: Cart } }>({
+        query: UPDATE_CART_LINES_MUTATION,
+        variables: { cartId, lines },
+    });
+    return res?.body.data.cartLinesUpdate.cart;
+}
+
+export async function getCart(cartId: string): Promise<Cart | undefined> {
+    const res = await shopifyFetch<{ cart: Cart }>({
+        query: GET_CART_QUERY,
+        variables: { cartId },
+    });
+    return res?.body.data.cart;
+}
 
 export async function shopifyFetch<T>({
     query,

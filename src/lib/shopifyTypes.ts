@@ -72,3 +72,35 @@ export type Collection = {
     image: Maybe<Image>;
     products: Connection<Product>;
 };
+
+export type CartCost = {
+    totalAmount: Money;
+};
+
+export type CartLine = {
+    id: string;
+    quantity: number;
+    cost: CartCost;
+    merchandise: {
+        id: string;
+        title: string;
+        selectedOptions: {
+            name: string;
+            value: string;
+        }[];
+        product: {
+            handle: string;
+            title: string;
+            featuredImage: Maybe<Image>;
+        };
+        price: Money;
+    };
+};
+
+export type Cart = {
+    id: string;
+    checkoutUrl: string;
+    cost: CartCost;
+    lines: Connection<CartLine>;
+    totalQuantity: number;
+};

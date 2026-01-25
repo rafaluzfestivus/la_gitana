@@ -1,59 +1,45 @@
-"use client";
 
-import { use, useEffect, useState } from "react";
-import { getProduct, Product } from "@/lib/mockData";
+import { getProduct } from "@/lib/mockData";
 import { ProductGallery } from "@/components/ui/ProductGallery";
 import { ProductInfo } from "@/components/ui/ProductInfo";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-export default function ProductPage({ params }: PageProps) {
-    const { id } = use(params);
-    const [product, setProduct] = useState<Product | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function fetchProduct() {
-            try {
-                const found = await getProduct(id);
-                setProduct(found || null);
-            } catch (error) {
-                console.error("Failed to fetch product", error);
-                setProduct(null);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchProduct();
-    }, [id]);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-cream-100 flex items-center justify-center">
-                <div className="animate-pulse flex flex-col items-center">
-                    <div className="h-12 w-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
-                    <p className="text-earth-900/60 font-serif">Loading masterpiece...</p>
-                </div>
-            </div>
-        );
-    }
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { id } = await params;
+    const product = await getProduct(id);
 
     if (!product) {
-        return (
-            <div className="min-h-screen bg-cream-100 flex flex-col items-center justify-center p-4">
-                <h1 className="font-serif text-3xl text-earth-900 mb-4">Product Not Found</h1>
-                <Link href="/">
-                    <Button>Return Home</Button>
-                </Link>
-            </div>
-        );
+        return {
+            title: "Product Not Found | La Gitana",
+        };
+    }
+
+    return {
+        title: `${product.name} | La Gitana`,
+        description: product.description,
+        openGraph: {
+            title: product.name,
+            description: product.description,
+            images: [product.image],
+        },
+    };
+}
+
+export default async function ProductPage({ params }: PageProps) {
+    const { id } = await params;
+    const product = await getProduct(id);
+
+    if (!product) {
+        notFound();
     }
 
     return (

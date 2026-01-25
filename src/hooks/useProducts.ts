@@ -9,6 +9,7 @@ export function useProducts() {
         async function fetchProducts() {
             try {
                 const data = await getProducts();
+                console.log("useProducts fetched:", data);
                 setProducts(data);
             } catch (error) {
                 console.error("Failed to fetch products", error);

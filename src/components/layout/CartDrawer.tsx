@@ -55,7 +55,7 @@ export function CartDrawer() {
                                             <div>
                                                 <div className="flex justify-between items-start">
                                                     <h3 className="font-serif text-earth-900">{item.name}</h3>
-                                                    <button onClick={() => removeFromCart(item.id)} className="text-earth-900/40 hover:text-red-500">
+                                                    <button onClick={() => removeFromCart(item.lineId)} className="text-earth-900/40 hover:text-red-500">
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
                                                 </div>
@@ -64,14 +64,14 @@ export function CartDrawer() {
                                             <div className="flex justify-between items-end">
                                                 <div className="flex items-center border border-earth-900/10">
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        onClick={() => updateQuantity(item.lineId, item.quantity - 1)}
                                                         className="p-1 hover:bg-earth-900/5"
                                                     >
                                                         <Minus className="h-3 w-3" />
                                                     </button>
                                                     <span className="w-8 text-center text-xs font-medium">{item.quantity}</span>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        onClick={() => updateQuantity(item.lineId, item.quantity + 1)}
                                                         className="p-1 hover:bg-earth-900/5"
                                                     >
                                                         <Plus className="h-3 w-3" />
@@ -93,7 +93,9 @@ export function CartDrawer() {
                                     <span className="font-serif text-xl text-earth-900">${cartTotal.toLocaleString()}</span>
                                 </div>
                                 <p className="text-xs text-earth-900/50 mb-6 text-center">Shipping and taxes calculated at checkout.</p>
-                                <Button className="w-full" size="lg">Checkout</Button>
+                                <a href={useCart().checkoutUrl || "#"}>
+                                    <Button className="w-full" size="lg">Checkout</Button>
+                                </a>
                             </div>
                         )}
                     </motion.div>

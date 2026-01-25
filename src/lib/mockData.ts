@@ -12,6 +12,7 @@ export interface Product {
     category: string;
     image: string;
     images: string[];
+    variants: { id: string; title: string; price: number }[]; // Added variants
     isNew?: boolean;
 }
 
@@ -38,6 +39,7 @@ export const PRODUCTS: Product[] = [
             "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop"
         ],
+        variants: [{ id: "1-v1", title: "Default Title", price: 890 }],
         isNew: true,
     },
     {
@@ -53,6 +55,7 @@ export const PRODUCTS: Product[] = [
             "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=800&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=800&auto=format&fit=crop"
         ],
+        variants: [{ id: "2-v1", title: "Default Title", price: 450 }],
     },
     {
         id: "3",
@@ -66,6 +69,7 @@ export const PRODUCTS: Product[] = [
             "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=800&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop"
         ],
+        variants: [{ id: "3-v1", title: "Default Title", price: 320 }],
     },
     {
         id: "4",
@@ -80,6 +84,7 @@ export const PRODUCTS: Product[] = [
             "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1600&auto=format&fit=crop"
         ],
+        variants: [{ id: "4-v1", title: "Default Title", price: 1200 }],
         isNew: true,
     },
     {
@@ -94,6 +99,7 @@ export const PRODUCTS: Product[] = [
             "/videos/v5.mp4",
             "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop"
         ],
+        variants: [{ id: "5-v1", title: "Default Title", price: 680 }],
     }
 ];
 
@@ -125,6 +131,11 @@ const mapShopifyProduct = (node: ShopifyProduct): Product => {
         category: node.tags[0] || "Geral", // Basic tag mapping
         image: node.featuredImage ? node.featuredImage.url : "",
         images: node.images.edges.map(e => e.node.url),
+        variants: node.variants.edges.map(e => ({
+            id: e.node.id,
+            title: e.node.title,
+            price: Number(e.node.price.amount)
+        })),
         isNew: node.tags.includes("new"),
     };
 };
@@ -153,7 +164,16 @@ export async function getProducts(): Promise<Product[]> {
             return PRODUCTS;
         }
 
-        return response.body.data.products.edges.map(({ node }) => mapShopifyProduct(node));
+
+        const products = response.body.data.products.edges.map(({ node }) => mapShopifyProduct(node));
+        console.log("Shopify Products Fetched:", products.length, products);
+
+        if (products.length === 0) {
+            console.warn("Shopify returned 0 products. Falling back to mocks for development.");
+            return PRODUCTS;
+        }
+
+        return products;
     } catch (error) {
         console.error("Failed to fetch products from Shopify:", error);
         return PRODUCTS;
