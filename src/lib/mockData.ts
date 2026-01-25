@@ -126,17 +126,17 @@ const mapShopifyProduct = (node: ShopifyProduct): Product => {
         id: node.id,
         handle: node.handle,
         name: node.title,
-        price: Number(node.priceRange.minVariantPrice.amount),
-        description: node.description,
-        category: node.tags[0] || "Geral", // Basic tag mapping
-        image: node.featuredImage ? node.featuredImage.url : "",
-        images: node.images.edges.map(e => e.node.url),
-        variants: node.variants.edges.map(e => ({
+        price: Number(node.priceRange?.minVariantPrice?.amount || 0),
+        description: node.description || "",
+        category: node.tags?.[0] || "Geral",
+        image: node.featuredImage?.url || "",
+        images: node.images?.edges?.map(e => e.node.url) || [],
+        variants: node.variants?.edges?.map(e => ({
             id: e.node.id,
             title: e.node.title,
-            price: Number(e.node.price.amount)
-        })),
-        isNew: node.tags.includes("new"),
+            price: Number(e.node.price?.amount || 0)
+        })) || [],
+        isNew: node.tags?.includes("new") || false,
     };
 };
 
@@ -157,6 +157,7 @@ export async function getProducts(): Promise<Product[]> {
     try {
         const response = await shopifyFetch<{ products: Connection<ShopifyProduct> }>({
             query: GET_PRODUCTS_QUERY,
+            variables: { first: 20 },
         });
 
         if (!response?.body?.data?.products) {
