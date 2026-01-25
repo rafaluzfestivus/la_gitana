@@ -1,15 +1,21 @@
-import { getProducts, Product } from "@/lib/mockData";
+import { getProducts, getCollectionProducts, Product } from "@/lib/mockData";
 import { useState, useEffect } from "react";
 
-export function useProducts() {
+export function useProducts(collectionHandle?: string) {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchProducts() {
+            setLoading(true);
             try {
-                const data = await getProducts();
-                console.log("useProducts fetched:", data);
+                let data: Product[];
+                if (collectionHandle) {
+                    data = await getCollectionProducts(collectionHandle);
+                } else {
+                    data = await getProducts();
+                }
+                console.log(`useProducts fetched (handle: ${collectionHandle || "all"}):`, data);
                 setProducts(data);
             } catch (error) {
                 console.error("Failed to fetch products", error);
@@ -19,7 +25,7 @@ export function useProducts() {
         }
 
         fetchProducts();
-    }, []);
+    }, [collectionHandle]);
 
     return { products, loading };
 }

@@ -217,3 +217,27 @@ export async function getCollections(): Promise<Collection[]> {
         return COLLECTIONS;
     }
 }
+
+export async function getCollectionProducts(handle: string): Promise<Product[]> {
+    try {
+        const { GET_COLLECTION_PRODUCTS_QUERY } = await import("./queries"); // Import here or ensure top level import
+
+        const response = await shopifyFetch<{ collection: { products: Connection<ShopifyProduct> } }>({
+            query: GET_COLLECTION_PRODUCTS_QUERY,
+            variables: { handle, first: 20 },
+        });
+
+        if (!response?.body?.data?.collection?.products) {
+            console.warn(`Shopify collection ${handle} not found or empty. Using mocks for dev if generic.`);
+            // Optional: Fallback to all products if specific collection fails in dev, or just return empty
+            // For now, let's return generic products if it's a test to ensure UI shows something, or empty.
+            // Given user context: Real integration. Return empty if not found.
+            return [];
+        }
+
+        return response.body.data.collection.products.edges.map(({ node }) => mapShopifyProduct(node));
+    } catch (error) {
+        console.error(`Failed to fetch products for collection ${handle}:`, error);
+        return [];
+    }
+}

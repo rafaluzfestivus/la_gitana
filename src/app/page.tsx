@@ -9,11 +9,11 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { ArrowRight } from "lucide-react";
 
 export default function Home() {
-  const { products, loading } = useProducts();
+  const { products, loading } = useProducts("pagina-de-inicio");
 
   return (
     <div className="flex flex-col min-h-screen">
-      <BentoHero />
+      <BentoHero products={products} loading={loading} />
 
       {/* Featured Section */}
       <section className="py-16 md:py-24 container mx-auto px-4 md:px-8">
@@ -34,7 +34,7 @@ export default function Home() {
                 <Skeleton className="h-4 w-1/4" />
               </div>
             ))
-            : products.slice(0, 4).map((product, index) => (
+            : products.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))
           }

@@ -34,12 +34,12 @@ export function Navbar() {
 
                 {/* Logo */}
                 <Link href="/" className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:flex-1">
-                    <div className="relative w-32 h-16 md:w-40 md:h-20">
+                    <div className="relative w-28 h-14 md:w-36 md:h-18">
                         <Image
                             src="/logo.png"
                             alt="La Gitana Logo"
                             fill
-                            className="object-contain"
+                            className="object-contain brightness-0 invert"
                         />
                     </div>
                 </Link>
@@ -47,18 +47,18 @@ export function Navbar() {
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex gap-6 items-center justify-center flex-[2]">
                     {[
-                        "Bolsa crossbody",
-                        "Bolsa de mão",
-                        "Bolsas multimarcas",
-                        "Acessórios",
-                        "Todos os produtos"
+                        { label: "Bolsa crossbody", href: "/collections/bolsa-crossbody" },
+                        { label: "Bolsa de mão", href: "/collections/bolsa-de-mao" },
+                        { label: "Bolsas multimarcas", href: "/collections/bolsas-multimarcas" },
+                        { label: "Acessórios", href: "/collections/acessorios" },
+                        { label: "Todos os produtos", href: "/collections" }
                     ].map((item) => (
                         <Link
-                            key={item}
-                            href="#"
+                            key={item.label}
+                            href={item.href}
                             className="text-xs uppercase tracking-widest text-cream-100/80 hover:text-gold-500 underline-offset-4 transition-colors whitespace-nowrap"
                         >
-                            {item}
+                            {item.label}
                         </Link>
                     ))}
                 </nav>
