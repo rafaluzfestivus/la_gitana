@@ -122,6 +122,9 @@ export const COLLECTIONS: Collection[] = [
 
 // Helper to map Shopify Product to internal App Product
 const mapShopifyProduct = (node: ShopifyProduct): Product => {
+    // Debug log
+    console.log("Mapping Product:", node.handle, "Media:", node.media?.edges?.length, "Images:", node.images?.edges?.length);
+
     // Extract videos from media
     // Note: We check if sources exist and take the first one (usually .mp4 or .m3u8, simplified here to take first url)
     const videos = node.media?.edges
@@ -131,6 +134,9 @@ const mapShopifyProduct = (node: ShopifyProduct): Product => {
 
     const images = node.images?.edges?.map(e => e.node.url) || [];
 
+    // Ensure we have at least one image if available
+    const primaryImage = node.featuredImage?.url || images[0] || "";
+
     return {
         id: node.id,
         handle: node.handle,
@@ -138,7 +144,7 @@ const mapShopifyProduct = (node: ShopifyProduct): Product => {
         price: Number(node.priceRange?.minVariantPrice?.amount || 0),
         description: node.description || "",
         category: node.tags?.[0] || "Geral",
-        image: node.featuredImage?.url || "",
+        image: primaryImage,
         images: [...videos, ...images], // Videos first so they can be cover
         variants: node.variants?.edges?.map(e => ({
             id: e.node.id,
@@ -252,13 +258,13 @@ export async function getCollectionProducts(handle: string): Promise<Product[]> 
         const products = response.body.data.collection.products.edges.map(({ node }) => mapShopifyProduct(node));
 
         if (products.length === 0) {
-            console.warn(`Shopify collection ${handle} returned 0 products.`);
-            return []; // Return empty to reflect reality
+            console.warn(`Shopify collection ${handle} returned 0 products. Falling back to mocks temporarily.`);
+            return PRODUCTS; // Temporary fallback to verify UI
         }
 
         return products;
     } catch (error) {
         console.error(`Failed to fetch products for collection ${handle}:`, error);
-        return []; // Return empty on error to avoid confusion
+        return PRODUCTS; // Fallback to mocks
     }
 }
