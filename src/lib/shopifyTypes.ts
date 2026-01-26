@@ -51,6 +51,13 @@ export type Product = {
     variants: Connection<ProductVariant>;
     featuredImage: Maybe<Image>;
     images: Connection<Image>;
+    media?: Connection<{
+        mediaContentType: string;
+        sources?: {
+            url: string;
+            mimeType: string;
+        }[];
+    }>;
     seo: {
         title: Maybe<string>;
         description: Maybe<string>;

@@ -18,6 +18,11 @@ export function ProductCard({ product, index }: ProductCardProps) {
     const { addToCart } = useCart();
     const [isHovered, setIsHovered] = useState(false);
 
+    // Check for video in images array (assuming first item usually, or checking extension)
+    // We check for .mp4 or .webm, allowing for query params
+    const mediaSource = product.images[0] || product.image;
+    const isVideo = mediaSource?.includes('.mp4') || mediaSource?.includes('.webm');
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -28,36 +33,33 @@ export function ProductCard({ product, index }: ProductCardProps) {
             onMouseLeave={() => setIsHovered(false)}
         >
             <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] w-full overflow-hidden cursor-pointer">
-                <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
-                />
+                {isVideo ? (
+                    <video
+                        src={mediaSource}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                    />
+                ) : (
+                    <Image
+                        src={mediaSource}
+                        alt={product.name}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                    />
+                )}
 
                 {/* Overlay Actions */}
                 <div className="absolute inset-0 bg-gradient-to-t from-lead-900/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
 
-                <div className="absolute bottom-4 left-4 right-4 flex gap-2 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 z-10">
-                    <Button
-                        className="flex-1 bg-cream-100/10 backdrop-blur-md border border-white/20 text-cream-100 hover:bg-cream-100 hover:text-lead-900"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            addToCart(product);
-                        }}
-                    >
-                        <ShoppingBag className="mr-2 h-4 w-4" /> Adicionar
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        className="w-12 px-0 text-cream-100 hover:bg-white/10"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            console.log("Quick view", product.id);
-                        }}
-                    >
-                        <Eye className="h-4 w-4" />
-                    </Button>
+                {/* Name as Button at Bottom (mimicking "Adicionar" style but with Name) */}
+                <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 z-10 flex flex-col gap-2">
+                    <div className="bg-transparent border border-cream-100/30 text-cream-100 text-center py-3 px-4 font-bold text-sm uppercase tracking-wider rounded-sm hover:bg-white hover:text-lead-900 transition-colors flex items-center justify-center gap-2 backdrop-blur-sm">
+                        <ShoppingBag className="w-4 h-4" />
+                        <span className="truncate">{product.name}</span>
+                    </div>
                 </div>
 
                 {product.isNew && (
@@ -67,13 +69,11 @@ export function ProductCard({ product, index }: ProductCardProps) {
                 )}
             </Link>
 
+            {/* Subter-info (Price only now, since Name is main button) */}
             <div className="p-4 relative z-10 bg-gradient-to-b from-transparent to-lead-900/50">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h3 className="font-serif text-lg text-cream-100 group-hover:text-gold-400 transition-colors">{product.name}</h3>
-                        <p className="text-xs text-cream-100/50 uppercase tracking-wider mt-1">{product.category}</p>
-                    </div>
-                    <span className="font-medium text-cream-100/90">${product.price.toLocaleString()}</span>
+                <div className="flex justify-between items-end">
+                    <p className="text-xs text-cream-100/50 uppercase tracking-wider">{product.category}</p>
+                    <span className="font-medium text-cream-100/90 tracking-widest">${product.price.toLocaleString()}</span>
                 </div>
             </div>
         </motion.div>

@@ -122,6 +122,15 @@ export const COLLECTIONS: Collection[] = [
 
 // Helper to map Shopify Product to internal App Product
 const mapShopifyProduct = (node: ShopifyProduct): Product => {
+    // Extract videos from media
+    // Note: We check if sources exist and take the first one (usually .mp4 or .m3u8, simplified here to take first url)
+    const videos = node.media?.edges
+        ?.filter(e => e.node.mediaContentType === 'VIDEO')
+        ?.map(e => e.node.sources?.[0]?.url)
+        ?.filter((url): url is string => !!url) || [];
+
+    const images = node.images?.edges?.map(e => e.node.url) || [];
+
     return {
         id: node.id,
         handle: node.handle,
@@ -130,7 +139,7 @@ const mapShopifyProduct = (node: ShopifyProduct): Product => {
         description: node.description || "",
         category: node.tags?.[0] || "Geral",
         image: node.featuredImage?.url || "",
-        images: node.images?.edges?.map(e => e.node.url) || [],
+        images: [...videos, ...images], // Videos first so they can be cover
         variants: node.variants?.edges?.map(e => ({
             id: e.node.id,
             title: e.node.title,
@@ -167,7 +176,7 @@ export async function getProducts(): Promise<Product[]> {
 
 
         const products = response.body.data.products.edges.map(({ node }) => mapShopifyProduct(node));
-        console.log("Shopify Products Fetched:", products.length, products);
+        console.log("Shopify Products Fetched:", products.length);
 
         if (products.length === 0) {
             console.warn("Shopify returned 0 products. Falling back to mocks for development.");
@@ -211,7 +220,14 @@ export async function getCollections(): Promise<Collection[]> {
             return COLLECTIONS;
         }
 
-        return response.body.data.collections.edges.map(({ node }) => mapShopifyCollection(node));
+        const collections = response.body.data.collections.edges.map(({ node }) => mapShopifyCollection(node));
+
+        if (collections.length === 0) {
+            console.warn("Shopify returned 0 collections. Falling back to mocks.");
+            return COLLECTIONS;
+        }
+
+        return collections;
     } catch (error) {
         console.error("Failed to fetch collections from Shopify:", error);
         return COLLECTIONS;
@@ -220,7 +236,8 @@ export async function getCollections(): Promise<Collection[]> {
 
 export async function getCollectionProducts(handle: string): Promise<Product[]> {
     try {
-        const { GET_COLLECTION_PRODUCTS_QUERY } = await import("./queries"); // Import here or ensure top level import
+        // Import here to avoid circular dependency issues if any
+        const { GET_COLLECTION_PRODUCTS_QUERY } = await import("./queries");
 
         const response = await shopifyFetch<{ collection: { products: Connection<ShopifyProduct> } }>({
             query: GET_COLLECTION_PRODUCTS_QUERY,
@@ -228,16 +245,20 @@ export async function getCollectionProducts(handle: string): Promise<Product[]> 
         });
 
         if (!response?.body?.data?.collection?.products) {
-            console.warn(`Shopify collection ${handle} not found or empty. Using mocks for dev if generic.`);
-            // Optional: Fallback to all products if specific collection fails in dev, or just return empty
-            // For now, let's return generic products if it's a test to ensure UI shows something, or empty.
-            // Given user context: Real integration. Return empty if not found.
-            return [];
+            console.warn(`Shopify collection ${handle} not found or empty.`);
+            return []; // Return empty to reflect reality
         }
 
-        return response.body.data.collection.products.edges.map(({ node }) => mapShopifyProduct(node));
+        const products = response.body.data.collection.products.edges.map(({ node }) => mapShopifyProduct(node));
+
+        if (products.length === 0) {
+            console.warn(`Shopify collection ${handle} returned 0 products.`);
+            return []; // Return empty to reflect reality
+        }
+
+        return products;
     } catch (error) {
         console.error(`Failed to fetch products for collection ${handle}:`, error);
-        return [];
+        return []; // Return empty on error to avoid confusion
     }
 }

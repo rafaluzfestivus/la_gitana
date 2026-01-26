@@ -8,12 +8,15 @@ import { useProducts } from "@/hooks/useProducts";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ArrowRight } from "lucide-react";
 
+import { HighlightCard } from "@/components/ui/HighlightCard";
+
 export default function Home() {
-  const { products, loading } = useProducts("pagina-de-inicio");
+  const { products: heroProducts, loading: heroLoading } = useProducts("destaques");
+  const { products: gridProducts, loading: gridLoading } = useProducts("pagina-de-inicio");
 
   return (
     <div className="flex flex-col min-h-screen">
-      <BentoHero products={products} loading={loading} />
+      <BentoHero products={heroProducts} loading={heroLoading} />
 
       {/* Featured Section */}
       <section className="py-16 md:py-24 container mx-auto px-4 md:px-8">
@@ -25,18 +28,22 @@ export default function Home() {
           <Button variant="link" className="hidden md:flex">View All <ArrowRight className="ml-2 w-4 h-4" /></Button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10">
+          {gridLoading
+            ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex flex-col gap-2">
                 <Skeleton className="aspect-[3/4] w-full" />
                 <Skeleton className="h-6 w-3/4" />
                 <Skeleton className="h-4 w-1/4" />
               </div>
             ))
-            : products.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))
+            : gridProducts.map((product, index) => {
+              // If index is 0 (1st item, top left in 5-col grid), render HighlightCard
+              if (index === 0) {
+                return <HighlightCard key="highlight" />;
+              }
+              return <ProductCard key={product.id} product={product} index={index} />;
+            })
           }
         </div>
 

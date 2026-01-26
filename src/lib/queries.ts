@@ -59,6 +59,19 @@ const productFragment = `
         }
       }
     }
+    media(first: 10) {
+      edges {
+        node {
+          mediaContentType
+          ... on Video {
+            sources {
+              url
+              mimeType
+            }
+          }
+        }
+      }
+    }
     seo {
       title
       description

@@ -39,25 +39,34 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {featured ? (
                         <Link href={`/product/${featured.handle}`} className="block h-full w-full">
-                            <Image
-                                src={featured.image}
-                                alt={featured.name}
-                                fill
-                                className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                            />
+                            {featured.images?.[0]?.includes('.mp4') ? (
+                                <video
+                                    src={featured.images[0]}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                />
+                            ) : (
+                                <Image
+                                    src={featured.image}
+                                    alt={featured.name}
+                                    fill
+                                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                                />
+                            )}
                             <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                            {/* Text Overlay for Hero */}
+                            <div className="absolute bottom-8 left-8 right-8 z-20">
+                                <h2 className="font-serif text-3xl text-cream-100 mb-2">{featured.name}</h2>
+                                <p className="text-cream-100/80 text-sm line-clamp-2 max-w-md">{featured.description}</p>
+                            </div>
                         </Link>
                     ) : (
-                        <div className="w-full h-full relative">
-                            <video
-                                src="/videos/v1.mp4"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-black/10" />
+                        // Fallback Skeleton/Placeholder
+                        <div className="w-full h-full relative flex items-center justify-center bg-lead-800">
+                            <span className="text-white/20">Destaque</span>
                         </div>
                     )}
                 </motion.div>
@@ -71,24 +80,26 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {secondary ? (
                         <Link href={`/product/${secondary.handle}`} className="block h-full w-full">
-                            <Image
-                                src={secondary.image}
-                                alt={secondary.name}
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
+                            {secondary.images?.[0]?.includes('.mp4') ? (
+                                <video
+                                    src={secondary.images[0]}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="absolute inset-0 w-full h-full object-cover opacity-90"
+                                />
+                            ) : (
+                                <Image
+                                    src={secondary.image}
+                                    alt={secondary.name}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                            )}
                         </Link>
                     ) : (
-                        <div className="w-full h-full relative">
-                            <video
-                                src="/videos/Use_the_uploaded_202601220232_j2wwo.mp4"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="absolute inset-0 w-full h-full object-cover opacity-90"
-                            />
-                        </div>
+                        <div className="w-full h-full relative bg-lead-800" />
                     )}
                 </motion.div>
 
@@ -101,24 +112,26 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {tertiary ? (
                         <Link href={`/product/${tertiary.handle}`} className="block h-full w-full">
-                            <Image
-                                src={tertiary.image}
-                                alt={tertiary.name}
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
+                            {tertiary.images?.[0]?.includes('.mp4') ? (
+                                <video
+                                    src={tertiary.images[0]}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                            ) : (
+                                <Image
+                                    src={tertiary.image}
+                                    alt={tertiary.name}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                            )}
                         </Link>
                     ) : (
-                        <div className="w-full h-full relative">
-                            <video
-                                src="/videos/v6.mp4"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                        </div>
+                        <div className="w-full h-full relative bg-lead-800" />
                     )}
                 </motion.div>
 
@@ -131,24 +144,26 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {quaternary ? (
                         <Link href={`/product/${quaternary.handle}`} className="block h-full w-full">
-                            <Image
-                                src={quaternary.image}
-                                alt={quaternary.name}
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
+                            {quaternary.images?.[0]?.includes('.mp4') ? (
+                                <video
+                                    src={quaternary.images[0]}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="absolute inset-0 w-full h-full object-cover"
+                                />
+                            ) : (
+                                <Image
+                                    src={quaternary.image}
+                                    alt={quaternary.name}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                            )}
                         </Link>
                     ) : (
-                        <div className="w-full h-full relative">
-                            <video
-                                src="/videos/Use_the_uploaded_202601220233_2d3x6.mp4"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                        </div>
+                        <div className="w-full h-full relative bg-lead-800" />
                     )}
                 </motion.div>
 
