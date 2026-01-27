@@ -185,8 +185,8 @@ export async function getProducts(): Promise<Product[]> {
         console.log("Shopify Products Fetched:", products.length);
 
         if (products.length === 0) {
-            console.warn("Shopify returned 0 products. Falling back to mocks for development.");
-            return PRODUCTS;
+            console.warn("Shopify returned 0 products.");
+            return [];
         }
 
         return products;
@@ -258,8 +258,8 @@ export async function getCollectionProducts(handle: string): Promise<Product[]> 
         const products = response.body.data.collection.products.edges.map(({ node }) => mapShopifyProduct(node));
 
         if (products.length === 0) {
-            console.warn(`Shopify collection ${handle} returned 0 products. Falling back to mocks temporarily.`);
-            return PRODUCTS; // Temporary fallback to verify UI
+            console.warn(`Shopify collection ${handle} returned 0 products.`);
+            return [];
         }
 
         return products;

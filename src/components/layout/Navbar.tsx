@@ -36,11 +36,13 @@ export function Navbar() {
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex gap-6 items-center justify-center flex-[2]">
                     {[
-                        { label: "Bolsa crossbody", href: "/collections/bolsa-crossbody" },
-                        { label: "Bolsa de mão", href: "/collections/bolsa-de-mao" },
+                        { label: "Bolsa de Mão", href: "/collections/bolsa-de-mao" },
+                        { label: "Bolsas de ombro", href: "/collections/bolsas-de-ombro" },
+                        { label: "Bolsas crossbody", href: "/collections/bolsa-crossbody" },
+                        { label: "Bolsas mochila", href: "/collections/bolsas-mochila" },
                         { label: "Bolsas multimarcas", href: "/collections/bolsas-multimarcas" },
-                        { label: "Acessórios", href: "/collections/acessorios" },
-                        { label: "Todos os produtos", href: "/collections" }
+                        { label: "Acessórios e pendentes", href: "/collections/acessorios" },
+                        { label: "Todos os produtos", href: "/collections/todos-os-produtos" }
                     ].map((item) => (
                         <Link
                             key={item.label}

@@ -13,7 +13,7 @@ import { HighlightCard } from "@/components/ui/HighlightCard";
 export default function Home() {
   const { products: heroProducts, loading: heroLoading } = useProducts("destaques");
 
-  const { products: gridProducts, loading: gridLoading } = useProducts("pagina-de-inicio");
+  const { products: gridProducts, loading: gridLoading } = useProducts("frontpage");
 
   return (
     <div className="flex flex-col min-h-screen">

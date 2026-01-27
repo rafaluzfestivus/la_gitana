@@ -8,10 +8,6 @@ import {
 } from "./queries";
 import { Cart } from "./shopifyTypes";
 
-const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-const storefrontAccessToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
-const apiVersion = "2024-01";
-
 export async function createCart(lines: { merchandiseId: string; quantity: number }[]): Promise<Cart | undefined> {
     const res = await shopifyFetch<{ cartCreate: { cart: Cart } }>({
         query: CREATE_CART_MUTATION,
@@ -59,8 +55,14 @@ export async function shopifyFetch<T>({
     query: string;
     variables?: Record<string, any>;
 }): Promise<{ status: number; body: { data: T } } | undefined> {
+    const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
+    const storefrontAccessToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+    const apiVersion = "2024-01";
+
     if (!domain || !storefrontAccessToken) {
-        console.warn("Shopify credentials missing. Falling back to mock data.");
+        console.warn("Shopify credentials missing. Falling back to mock data. Check your .env file.");
+        if (!domain) console.warn("- Missing NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN");
+        if (!storefrontAccessToken) console.warn("- Missing NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN");
         return undefined;
     }
 
@@ -78,12 +80,14 @@ export async function shopifyFetch<T>({
                     variables,
                 }),
                 next: { tags: ["shopify"] }, // For Next.js revalidation
+                cache: "no-store" // DEBUG: Force fresh fetch
             }
         );
 
         const body = await result.json();
 
         if (body.errors) {
+            console.error("Shopify GraphQL Errors:", body.errors);
             throw body.errors[0];
         }
 
