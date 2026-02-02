@@ -40,7 +40,7 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {featured ? (
                         <Link href={`/product/${featured.handle}`} className="block h-full w-full">
-                            {featured.images?.[0]?.includes('.mp4') ? (
+                            {(featured.images?.[0]?.includes('.mp4') || featured.images?.[0]?.includes('.webm') || featured.images?.[0]?.includes('.mov') || featured.images?.[0]?.includes('/cdn/shop/videos')) ? (
                                 <video
                                     src={featured.images[0]}
                                     autoPlay
@@ -93,7 +93,7 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {tertiary ? (
                         <Link href={`/product/${tertiary.handle}`} className="block h-full w-full">
-                            {tertiary.images?.[0]?.includes('.mp4') ? (
+                            {(tertiary.images?.[0]?.includes('.mp4') || tertiary.images?.[0]?.includes('.webm') || tertiary.images?.[0]?.includes('.mov') || tertiary.images?.[0]?.includes('/cdn/shop/videos')) ? (
                                 <video
                                     src={tertiary.images[0]}
                                     autoPlay
@@ -125,7 +125,7 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {quaternary ? (
                         <Link href={`/product/${quaternary.handle}`} className="block h-full w-full">
-                            {quaternary.images?.[0]?.includes('.mp4') ? (
+                            {(quaternary.images?.[0]?.includes('.mp4') || quaternary.images?.[0]?.includes('.webm') || quaternary.images?.[0]?.includes('.mov') || quaternary.images?.[0]?.includes('/cdn/shop/videos')) ? (
                                 <video
                                     src={quaternary.images[0]}
                                     autoPlay
