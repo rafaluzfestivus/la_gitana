@@ -7,7 +7,17 @@ import Image from "next/image";
 import { Button } from "../ui/Button";
 
 export function CartDrawer() {
-    const { isCartOpen, toggleCart, items, removeFromCart, updateQuantity, cartTotal } = useCart();
+    const { isCartOpen, toggleCart, items, removeFromCart, updateQuantity, cartTotal, checkoutUrl } = useCart();
+
+    const getSafeCheckoutUrl = (url: string | undefined) => {
+        if (!url) return undefined;
+        // Fix: Force Shopify domain if the API returns the custom domain (which points to Vercel)
+        // This avoids the 404 loop where lagitanabags.com.br/cart/c/... hits Vercel instead of Shopify
+        const shopifyDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "1fgxr0-71.myshopify.com";
+        return url.replace("lagitanabags.com.br", shopifyDomain);
+    };
+
+    const finalCheckoutUrl = getSafeCheckoutUrl(checkoutUrl);
 
     return (
         <AnimatePresence>
@@ -93,9 +103,9 @@ export function CartDrawer() {
                                     <span className="font-serif text-xl text-earth-900">${cartTotal.toLocaleString()}</span>
                                 </div>
                                 <p className="text-xs text-earth-900/50 mb-6 text-center">Shipping and taxes calculated at checkout.</p>
-                                {useCart().checkoutUrl ? (
+                                {finalCheckoutUrl ? (
                                     <a
-                                        href={useCart().checkoutUrl}
+                                        href={finalCheckoutUrl}
                                         className="w-full inline-flex items-center justify-center h-14 px-10 text-base tracking-widest uppercase font-medium bg-earth-900 text-cream-100 hover:bg-earth-800 transition-colors"
                                     >
                                         Checkout
@@ -108,7 +118,7 @@ export function CartDrawer() {
 
                                 {/* DEBUG CHECKOUT URL */}
                                 <div className="mt-2 p-2 text-[10px] text-red-500 break-all bg-gray-100 text-center">
-                                    DEBUG URL: {useCart().checkoutUrl || "NULL"}
+                                    DEBUG URL: {finalCheckoutUrl || "NULL"}
                                 </div>
                             </div>
                         )}
