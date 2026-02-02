@@ -19,9 +19,17 @@ export function ProductCard({ product, index }: ProductCardProps) {
     const [isHovered, setIsHovered] = useState(false);
 
     // Check for video in images array (assuming first item usually, or checking extension)
-    // We check for .mp4 or .webm, allowing for query params
+    // We check for common video extensions and Shopify CDN video patterns
     const mediaSource = product.images[0] || product.image;
-    const isVideo = mediaSource?.includes('.mp4') || mediaSource?.includes('.webm');
+
+    // Enhanced video detection
+    const isVideo = mediaSource && (
+        mediaSource.includes('.mp4') ||
+        mediaSource.includes('.webm') ||
+        mediaSource.includes('.mov') ||
+        mediaSource.includes('.m4v') ||
+        mediaSource.includes('/cdn/shop/videos') // Common Shopify video path pattern
+    );
 
     return (
         <motion.div
@@ -32,7 +40,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] w-full overflow-hidden cursor-pointer">
+            <Link href={`/product/${product.handle}`} className="block relative aspect-[3/4] w-full overflow-hidden cursor-pointer">
                 {isVideo ? (
                     <video
                         src={mediaSource}
