@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Search, Menu } from "lucide-react";
+import { ShoppingBag, Search, Menu, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useCustomer } from "@/context/CustomerContext";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ import Image from "next/image";
 
 export function Navbar() {
     const { toggleCart, cartCount } = useCart();
+    const { isAuthenticated } = useCustomer();
 
     return (
         <motion.header
@@ -56,6 +58,9 @@ export function Navbar() {
 
                 {/* Icons */}
                 <div className="flex-1 flex justify-end gap-4 md:gap-6 items-center">
+                    <Link href={isAuthenticated ? "/account" : "/login"} className="text-cream-100 hover:text-gold-500 transition-colors">
+                        <User className="h-5 w-5" />
+                    </Link>
                     <button className="text-cream-100 hover:text-gold-500 transition-colors">
                         <Search className="h-5 w-5" />
                     </button>

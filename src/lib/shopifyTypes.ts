@@ -111,3 +111,36 @@ export type Cart = {
     lines: Connection<CartLine>;
     totalQuantity: number;
 };
+
+export type Customer = {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    orders: Connection<Order>;
+    defaultAddress?: Address;
+    addresses: Connection<Address>;
+};
+
+export type Address = {
+    id: string;
+    address1: string;
+    address2?: string;
+    city: string;
+    province?: string;
+    country: string;
+    zip: string;
+};
+
+export type Order = {
+    id: string;
+    orderNumber: number;
+    processedAt: string;
+    totalPrice: Money;
+    lineItems: Connection<{
+        title: string;
+        quantity: number;
+    }>;
+    shippingAddress?: Address;
+};

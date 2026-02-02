@@ -103,3 +103,55 @@ export async function shopifyFetch<T>({
         };
     }
 }
+
+// CUSTOMER API HELPERS
+
+export async function createCustomer(input: { email: string; password: string; firstName?: string; lastName?: string }) {
+    const res = await shopifyFetch<{ customerCreate: { customer: any; customerUserErrors: any[] } }>({
+        query: `
+        mutation customerCreate($input: CustomerCreateInput!) {
+            customerCreate(input: $input) {
+                customer {
+                    id
+                }
+                customerUserErrors {
+                    code
+                    field
+                    message
+                }
+            }
+        }`,
+        variables: { input },
+    });
+    return res?.body.data.customerCreate;
+}
+
+export async function createCustomerAccessToken(input: { email: string; password: string }) {
+    const res = await shopifyFetch<{ customerAccessTokenCreate: { customerAccessToken: { accessToken: string; expiresAt: string }; customerUserErrors: any[] } }>({
+        query: `
+        mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+            customerAccessTokenCreate(input: $input) {
+                customerAccessToken {
+                    accessToken
+                    expiresAt
+                }
+                customerUserErrors {
+                    code
+                    field
+                    message
+                }
+            }
+        }`,
+        variables: { input },
+    });
+    return res?.body.data.customerAccessTokenCreate;
+}
+
+export async function getCustomer(accessToken: string) {
+    const { GET_CUSTOMER_QUERY } = await import("./queries"); // Import dynamically to avoid circular deps if any
+    const res = await shopifyFetch<{ customer: any }>({
+        query: GET_CUSTOMER_QUERY,
+        variables: { customerAccessToken: accessToken },
+    });
+    return res?.body.data.customer;
+}
