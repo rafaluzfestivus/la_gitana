@@ -16,7 +16,7 @@ export default function RecoverPage() {
 
         try {
             const res = await recoverCustomerPassword(email);
-            if (res?.customerUserErrors?.length > 0) {
+            if (res && res.customerUserErrors && res.customerUserErrors.length > 0) {
                 setStatus("error");
                 setMessage(res.customerUserErrors[0].message);
             } else {
