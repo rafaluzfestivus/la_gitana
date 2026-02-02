@@ -4,9 +4,46 @@ import {
     ADD_CART_LINES_MUTATION,
     UPDATE_CART_LINES_MUTATION,
     REMOVE_CART_LINES_MUTATION,
-    GET_CART_QUERY
+    GET_CART_QUERY,
+    GET_PRODUCTS_QUERY,
+    GET_COLLECTIONS_QUERY,
+    GET_PRODUCT_BY_HANDLE_QUERY,
+    GET_COLLECTION_PRODUCTS_QUERY,
+    GET_CUSTOMER_QUERY,
+    CART_BUYER_IDENTITY_UPDATE_MUTATION
 } from "./queries";
-import { Cart } from "./shopifyTypes";
+import { Cart, Product, Collection } from "./shopifyTypes";
+
+export async function getProducts({ first = 20, query = "", sortKey = "CREATED_AT", reverse = false }: { first?: number; query?: string; sortKey?: string; reverse?: boolean }): Promise<{ edges: { node: Product }[] } | undefined> {
+    const res = await shopifyFetch<{ products: { edges: { node: Product }[] } }>({
+        query: GET_PRODUCTS_QUERY,
+        variables: { first, query, sortKey, reverse },
+    });
+    return res?.body.data.products;
+}
+
+export async function getCollections(): Promise<{ edges: { node: Collection }[] } | undefined> {
+    const res = await shopifyFetch<{ collections: { edges: { node: Collection }[] } }>({
+        query: GET_COLLECTIONS_QUERY,
+    });
+    return res?.body.data.collections;
+}
+
+export async function getProduct(handle: string): Promise<Product | undefined> {
+    const res = await shopifyFetch<{ product: Product }>({
+        query: GET_PRODUCT_BY_HANDLE_QUERY,
+        variables: { handle },
+    });
+    return res?.body.data.product;
+}
+
+export async function getCollection(handle: string): Promise<{ products: { edges: { node: Product }[] } } | undefined> {
+    const res = await shopifyFetch<{ collection: { products: { edges: { node: Product }[] } } }>({
+        query: GET_COLLECTION_PRODUCTS_QUERY,
+        variables: { handle, first: 100 },
+    });
+    return res?.body.data.collection;
+}
 
 export async function createCart(lines: { merchandiseId: string; quantity: number }[]): Promise<Cart | undefined> {
     const res = await shopifyFetch<{ cartCreate: { cart: Cart } }>({
@@ -148,7 +185,6 @@ export async function createCustomerAccessToken(input: { email: string; password
 }
 
 export async function getCustomer(accessToken: string) {
-    const { GET_CUSTOMER_QUERY } = await import("./queries"); // Import dynamically to avoid circular deps if any
     const res = await shopifyFetch<{ customer: any }>({
         query: GET_CUSTOMER_QUERY,
         variables: { customerAccessToken: accessToken },
@@ -174,7 +210,6 @@ export async function recoverCustomerPassword(email: string) {
 }
 
 export async function updateCartBuyerIdentity(cartId: string, customerAccessToken: string, email: string) {
-    const { CART_BUYER_IDENTITY_UPDATE_MUTATION } = await import("./queries");
     const res = await shopifyFetch<{ cartBuyerIdentityUpdate: { cart: Cart; userErrors: any[] } }>({
         query: CART_BUYER_IDENTITY_UPDATE_MUTATION,
         variables: {

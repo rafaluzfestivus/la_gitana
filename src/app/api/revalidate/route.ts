@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
         // We can be specific based on the topic, but for simplicity we revalidate all shopify data
         // Topics: products/update, collections/update
-        revalidateTag('shopify');
+        // revalidateTag('shopify');
 
         console.log('Revalidated tag: shopify');
 
