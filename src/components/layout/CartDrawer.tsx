@@ -106,8 +106,11 @@ export function CartDrawer() {
                                     </Button>
                                 )}
                             </div>
-                        )}
-                    </motion.div>
+                            {/* DEBUG CHECKOUT URL */}
+                        <div className="p-2 text-[10px] text-red-500 break-all bg-gray-100">
+                            DEBUG URL: {useCart().checkoutUrl || "NULL"}
+                        </div>
+                    </div>
                 </>
             )}
         </AnimatePresence>
