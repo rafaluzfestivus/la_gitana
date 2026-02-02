@@ -23,12 +23,13 @@ export function ProductCard({ product, index }: ProductCardProps) {
     const mediaSource = product.images[0] || product.image;
 
     // Enhanced video detection
+    // We check for common video extensions and Shopify CDN video patterns
     const isVideo = mediaSource && (
         mediaSource.includes('.mp4') ||
         mediaSource.includes('.webm') ||
         mediaSource.includes('.mov') ||
         mediaSource.includes('.m4v') ||
-        mediaSource.includes('/cdn/shop/videos') // Common Shopify video path pattern
+        mediaSource.includes('/cdn/shop/videos')
     );
 
     return (
@@ -48,6 +49,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
                         muted
                         loop
                         playsInline
+                        poster={product.image}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
                     />
                 ) : (

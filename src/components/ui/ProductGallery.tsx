@@ -21,7 +21,10 @@ export function ProductGallery({ images }: ProductGalleryProps) {
         setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
     };
 
-    const isVideo = (url: string) => url.endsWith(".mp4");
+    const isVideo = (url: string) => {
+        if (!url) return false;
+        return url.includes(".mp4") || url.includes("/cdn/shop/videos");
+    };
 
     return (
         <div className="flex flex-col gap-4">
@@ -43,6 +46,8 @@ export function ProductGallery({ images }: ProductGalleryProps) {
                                 loop
                                 muted
                                 playsInline
+                                // Use the current image if checking specific item, or find a fallback image
+                                poster={images.find(img => !isVideo(img))}
                                 className="w-full h-full object-cover"
                             />
                         ) : (

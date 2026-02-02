@@ -99,7 +99,9 @@ export function CartDrawer() {
                                     disabled={!useCart().checkoutUrl}
                                     onClick={() => {
                                         const url = useCart().checkoutUrl;
+                                        console.log("Checkout URL:", url);
                                         if (url) window.location.href = url;
+                                        else alert("Checkout URL missing");
                                     }}
                                 >
                                     {useCart().checkoutUrl ? 'Checkout' : 'Loading...'}
