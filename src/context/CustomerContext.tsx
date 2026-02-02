@@ -71,6 +71,14 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
                 localStorage.setItem("shopifyCustomerToken", token);
                 setAccessToken(token);
                 await fetchCustomer(token);
+
+                // Link Cart if exists
+                const cartId = localStorage.getItem("shopifyCartId");
+                if (cartId) {
+                    const { updateCartBuyerIdentity } = await import("@/lib/shopify");
+                    await updateCartBuyerIdentity(cartId, token, email);
+                }
+
                 router.refresh();
                 return {};
             }

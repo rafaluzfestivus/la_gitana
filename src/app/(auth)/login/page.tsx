@@ -52,7 +52,12 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                        <label className="block text-cream-100/80 text-sm uppercase tracking-wider mb-2">Senha</label>
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="text-cream-100/80 text-sm uppercase tracking-wider">Senha</label>
+                            <Link href="/recover" className="text-xs text-gold-500 hover:text-gold-400">
+                                Esqueceu a senha?
+                            </Link>
+                        </div>
                         <input
                             type="password"
                             required

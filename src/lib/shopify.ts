@@ -155,3 +155,35 @@ export async function getCustomer(accessToken: string) {
     });
     return res?.body.data.customer;
 }
+
+export async function recoverCustomerPassword(email: string) {
+    const res = await shopifyFetch<{ customerRecover: { customerUserErrors: any[] } }>({
+        query: `
+        mutation customerRecover($email: String!) {
+            customerRecover(email: $email) {
+                customerUserErrors {
+                    code
+                    field
+                    message
+                }
+            }
+        }`,
+        variables: { email },
+    });
+    return res?.body.data.customerRecover;
+}
+
+export async function updateCartBuyerIdentity(cartId: string, customerAccessToken: string, email: string) {
+    const { CART_BUYER_IDENTITY_UPDATE_MUTATION } = await import("./queries");
+    const res = await shopifyFetch<{ cartBuyerIdentityUpdate: { cart: Cart; userErrors: any[] } }>({
+        query: CART_BUYER_IDENTITY_UPDATE_MUTATION,
+        variables: {
+            cartId,
+            buyerIdentity: {
+                customerAccessToken,
+                email,
+            },
+        },
+    });
+    return res?.body.data.cartBuyerIdentityUpdate.cart;
+}
