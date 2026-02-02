@@ -126,10 +126,14 @@ const mapShopifyProduct = (node: ShopifyProduct): Product => {
     console.log("Mapping Product:", node.handle, "Media:", node.media?.edges?.length, "Images:", node.images?.edges?.length);
 
     // Extract videos from media
-    // Note: We check if sources exist and take the first one (usually .mp4 or .m3u8, simplified here to take first url)
+    // We prioritize MP4 sources for better compatibility
     const videos = node.media?.edges
         ?.filter(e => e.node.mediaContentType === 'VIDEO')
-        ?.map(e => e.node.sources?.[0]?.url)
+        ?.map(e => {
+            const sources = e.node.sources || [];
+            const mp4Source = sources.find(s => s.mimeType === 'video/mp4' || s.url.includes('.mp4'));
+            return mp4Source ? mp4Source.url : sources[0]?.url;
+        })
         ?.filter((url): url is string => !!url) || [];
 
     const images = node.images?.edges?.map(e => e.node.url) || [];
