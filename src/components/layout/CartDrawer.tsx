@@ -62,7 +62,7 @@ export function CartDrawer() {
                                                 <p className="text-xs text-earth-900/60 uppercase">{item.category}</p>
                                             </div>
                                             <div className="flex justify-between items-end">
-                                                <div className="flex items-center border border-earth-900/10">
+                                                <div className="flex items-center border border-earth-900/10 text-earth-900">
                                                     <button
                                                         onClick={() => updateQuantity(item.lineId, item.quantity - 1)}
                                                         className="p-1 hover:bg-earth-900/5"
