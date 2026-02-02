@@ -93,19 +93,18 @@ export function CartDrawer() {
                                     <span className="font-serif text-xl text-earth-900">${cartTotal.toLocaleString()}</span>
                                 </div>
                                 <p className="text-xs text-earth-900/50 mb-6 text-center">Shipping and taxes calculated at checkout.</p>
-                                <Button
-                                    className="w-full"
-                                    size="lg"
-                                    disabled={!useCart().checkoutUrl}
-                                    onClick={() => {
-                                        const url = useCart().checkoutUrl;
-                                        console.log("Checkout URL:", url);
-                                        if (url) window.location.href = url;
-                                        else alert("Checkout URL missing");
-                                    }}
-                                >
-                                    {useCart().checkoutUrl ? 'Checkout' : 'Loading...'}
-                                </Button>
+                                {useCart().checkoutUrl ? (
+                                    <a
+                                        href={useCart().checkoutUrl}
+                                        className="w-full inline-flex items-center justify-center h-14 px-10 text-base tracking-widest uppercase font-medium bg-earth-900 text-cream-100 hover:bg-earth-800 transition-colors"
+                                    >
+                                        Checkout
+                                    </a>
+                                ) : (
+                                    <Button className="w-full" size="lg" disabled>
+                                        Loading...
+                                    </Button>
+                                )}
                             </div>
                         )}
                     </motion.div>

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Eye, ShoppingBag } from "lucide-react";
 import { useState } from "react";
+import { VideoPlayer } from "./VideoPlayer";
 
 interface ProductCardProps {
     product: Product;
@@ -32,6 +33,8 @@ export function ProductCard({ product, index }: ProductCardProps) {
         mediaSource.includes('/cdn/shop/videos')
     );
 
+
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -43,12 +46,8 @@ export function ProductCard({ product, index }: ProductCardProps) {
         >
             <Link href={`/product/${product.handle}`} className="block relative aspect-[3/4] w-full overflow-hidden cursor-pointer">
                 {isVideo ? (
-                    <video
+                    <VideoPlayer
                         src={mediaSource}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
                         poster={product.image}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 opacity-90 group-hover:opacity-100"
                     />
@@ -63,11 +62,6 @@ export function ProductCard({ product, index }: ProductCardProps) {
 
                 {/* Overlay Actions */}
                 <div className="absolute inset-0 bg-gradient-to-t from-lead-900/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-
-                {/* DEBUG OVERLAY (Temporary) */}
-                <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] p-1 z-50 font-mono">
-                    {isVideo ? "VIDEO DETECTED" : "IMAGE ONLY"}
-                </div>
 
                 {/* Name as Button at Bottom (mimicking "Adicionar" style but with Name) */}
                 <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 z-10 flex flex-col gap-2">

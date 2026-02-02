@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VideoPlayer } from "./VideoPlayer";
 
 interface ProductGalleryProps {
     images: string[];
@@ -40,15 +41,9 @@ export function ProductGallery({ images }: ProductGalleryProps) {
                         className="absolute inset-0 w-full h-full"
                     >
                         {isVideo(images[currentIndex]) ? (
-                            <video
+                            <VideoPlayer
                                 src={images[currentIndex]}
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                // Use the current image if checking specific item, or find a fallback image
                                 poster={images.find(img => !isVideo(img))}
-                                className="w-full h-full object-cover"
                             />
                         ) : (
                             <Image
