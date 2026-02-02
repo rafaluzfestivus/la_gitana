@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Product } from "@/lib/mockData";
 import { Skeleton } from "./Skeleton";
 import { HighlightCard } from "./HighlightCard";
+import { VideoPlayer } from "./VideoPlayer";
 
 interface BentoHeroProps {
     products: Product[];
@@ -40,26 +41,14 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {featured ? (
                         <Link href={`/product/${featured.handle}`} className="block h-full w-full">
-                            {(featured.images?.[0]?.includes('.mp4') || featured.images?.[0]?.includes('.webm') || featured.images?.[0]?.includes('.mov') || featured.images?.[0]?.includes('/cdn/shop/videos')) ? (
-                                <video
-                                    src={featured.images[0]}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                                />
-                            ) : (
-                                <Image
-                                    src={featured.image || '/placeholder-bag.jpg'}
-                                    alt={featured.name}
-                                    fill
-                                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                                />
-                            )}
-                            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                            <VideoPlayer
+                                src={featured.images[0]}
+                                poster={featured.image}
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors pointer-events-none" />
                             {/* Text Overlay for Hero */}
-                            <div className="absolute bottom-8 left-8 right-8 z-20">
+                            <div className="absolute bottom-8 left-8 right-8 z-20 pointer-events-none">
                                 <h2 className="font-serif text-3xl text-cream-100 mb-2">{featured.name}</h2>
                                 <p className="text-cream-100/80 text-sm line-clamp-2 max-w-md">{featured.description}</p>
                             </div>
@@ -93,23 +82,11 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {tertiary ? (
                         <Link href={`/product/${tertiary.handle}`} className="block h-full w-full">
-                            {(tertiary.images?.[0]?.includes('.mp4') || tertiary.images?.[0]?.includes('.webm') || tertiary.images?.[0]?.includes('.mov') || tertiary.images?.[0]?.includes('/cdn/shop/videos')) ? (
-                                <video
-                                    src={tertiary.images[0]}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                />
-                            ) : (
-                                <Image
-                                    src={tertiary.image || '/placeholder-bag.jpg'}
-                                    alt={tertiary.name}
-                                    fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                />
-                            )}
+                            <VideoPlayer
+                                src={tertiary.images[0]}
+                                poster={tertiary.image}
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
                         </Link>
                     ) : (
                         <div className="w-full h-full relative bg-lead-800" />
@@ -125,23 +102,11 @@ export function BentoHero({ products, loading }: BentoHeroProps) {
                 >
                     {quaternary ? (
                         <Link href={`/product/${quaternary.handle}`} className="block h-full w-full">
-                            {(quaternary.images?.[0]?.includes('.mp4') || quaternary.images?.[0]?.includes('.webm') || quaternary.images?.[0]?.includes('.mov') || quaternary.images?.[0]?.includes('/cdn/shop/videos')) ? (
-                                <video
-                                    src={quaternary.images[0]}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="absolute inset-0 w-full h-full object-cover"
-                                />
-                            ) : (
-                                <Image
-                                    src={quaternary.image || '/placeholder-bag.jpg'}
-                                    alt={quaternary.name}
-                                    fill
-                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                />
-                            )}
+                            <VideoPlayer
+                                src={quaternary.images[0]}
+                                poster={quaternary.image}
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
                         </Link>
                     ) : (
                         <div className="w-full h-full relative bg-lead-800" />
