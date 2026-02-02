@@ -40,7 +40,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 if (existingCart) {
                     setCart(existingCart);
                 } else {
+                    // Cart expired or not found
+                    console.warn("Cart expired, clearing localStorage");
                     localStorage.removeItem("shopifyCartId");
+                    setCart(undefined);
                 }
             }
         };
@@ -49,18 +52,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const mapCartLinesToItems = (lines: CartLine[]): CartItem[] => {
         return lines.map((line) => {
-            // Safe checks for potentially missing data
             const product = line.merchandise?.product;
             const price = parseFloat(line.cost?.totalAmount?.amount || "0") / line.quantity;
-
             return {
                 id: line.merchandise.id, // Variant ID
                 lineId: line.id,
                 handle: product?.handle || "",
                 name: product?.title || line.merchandise.title,
                 price: price,
-                description: "", // Not available in Line
-                category: "", // Not available in Line
+                description: "",
+                category: "",
                 image: product?.featuredImage?.url || "",
                 images: [],
                 variants: [],
@@ -79,7 +80,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         try {
             let newCart;
             const cartId = cart?.id;
-
             const variantId = product.variants?.[0]?.id || product.id;
 
             if (cartId) {
@@ -105,11 +105,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const handleRemoveFromCart = async (lineId: string) => {
         if (!cart?.id) return;
         setIsLoading(true);
+
+        // Optimistic Remove
+        const previousCart = cart;
+        const optimisticLines = cart.lines.edges.filter(edge => edge.node.id !== lineId);
+        setCart({ ...cart, lines: { ...cart.lines, edges: optimisticLines } }); // Quick update to UI
+
         try {
             const newCart = await removeFromCart(cart.id, [lineId]);
             if (newCart) setCart(newCart);
         } catch (e) {
             console.error(e);
+            setCart(previousCart); // Revert
         } finally {
             setIsLoading(false);
         }
@@ -117,7 +124,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const handleUpdateQuantity = async (lineId: string, quantity: number) => {
         if (!cart?.id) return;
-        setIsLoading(true);
+        // setisLoading(true); // Don't show global loading for optimistic updates to feel faster
+
+        // 1. Optimistic Update
+        const previousCart = cart;
+        const optimisticEdges = cart.lines.edges.map(edge => {
+            if (edge.node.id === lineId) {
+                return { ...edge, node: { ...edge.node, quantity: quantity } };
+            }
+            return edge;
+        });
+
+        // Note: Recalculating totals optimistically is complex without product price handy in a clean way, 
+        // but updating the quantity number immediately is the most important part for UX.
+        // We will just update the lines structure.
+        setCart({ ...previousCart, lines: { ...previousCart.lines, edges: optimisticEdges } });
+
         try {
             if (quantity === 0) {
                 await handleRemoveFromCart(lineId);
@@ -127,8 +149,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             if (newCart) setCart(newCart);
         } catch (e) {
             console.error(e);
+            setCart(previousCart); // Revert on failure
         } finally {
-            setIsLoading(false);
+            // setIsLoading(false);
         }
     };
 
