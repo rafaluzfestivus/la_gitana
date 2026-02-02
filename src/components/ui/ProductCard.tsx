@@ -64,6 +64,11 @@ export function ProductCard({ product, index }: ProductCardProps) {
                 {/* Overlay Actions */}
                 <div className="absolute inset-0 bg-gradient-to-t from-lead-900/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
 
+                {/* DEBUG OVERLAY (Temporary) */}
+                <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] p-1 z-50 font-mono">
+                    {isVideo ? "VIDEO DETECTED" : "IMAGE ONLY"}
+                </div>
+
                 {/* Name as Button at Bottom (mimicking "Adicionar" style but with Name) */}
                 <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 z-10 flex flex-col gap-2">
                     <div className="bg-transparent border border-cream-100/30 text-cream-100 text-center py-3 px-4 font-bold text-sm uppercase tracking-wider rounded-sm hover:bg-white hover:text-lead-900 transition-colors flex items-center justify-center gap-2 backdrop-blur-sm">
