@@ -9,12 +9,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@sanity/image-url": "^2.0.3",
+    "@sanity/vision": "^5.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.28.2",
     "lucide-react": "^0.562.0",
     "next": "16.1.4",
+    "next-sanity": "^12.0.16",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "sanity": "^5.7.0",
+    "styled-components": "^6.3.8",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

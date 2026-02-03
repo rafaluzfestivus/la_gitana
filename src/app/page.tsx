@@ -9,15 +9,15 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { ArrowRight } from "lucide-react";
 
 import { HighlightCard } from "@/components/ui/HighlightCard";
+import { ModularSection } from "@/components/modular/ModularSection";
 
 export default function Home() {
-  const { products: heroProducts, loading: heroLoading } = useProducts("destaques");
-
   const { products: gridProducts, loading: gridLoading } = useProducts("frontpage");
 
   return (
     <div className="flex flex-col min-h-screen">
-      <BentoHero products={heroProducts} loading={heroLoading} />
+      {/* Modular Configurable Section as Hero */}
+      <ModularSection />
 
       {/* Featured Section */}
       <section className="py-16 md:py-24 container mx-auto px-4 md:px-8">
@@ -48,6 +48,8 @@ export default function Home() {
           <Button variant="outline">Ver Tudo</Button>
         </div>
       </section>
+
+
 
       {/* Aesthetic Spacer / Marquee or Image */}
       <section className="relative h-[500px] w-full bg-cover bg-center bg-fixed" style={{ backgroundImage: 'url("/hero-lux.jpg")' }}>
